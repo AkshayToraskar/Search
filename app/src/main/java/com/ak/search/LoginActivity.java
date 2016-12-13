@@ -8,6 +8,13 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.ak.search.app.SessionManager;
+import com.ak.search.app.Validate;
+import com.ak.search.model.Questions;
+import com.ak.search.model.User;
+
+import java.util.List;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
@@ -19,14 +26,25 @@ public class LoginActivity extends AppCompatActivity {
     @BindView(R.id.txt_password)
     EditText txt_password;
 
+    public static String USERNAME = "username", ISADMIN = "is_admin";
+    private SessionManager sessionManager;
+    private Validate validate;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
         ButterKnife.bind(this);
 
+        validate = new Validate();
+        sessionManager = new SessionManager(this);
 
-
+        if (sessionManager.isLoggedIn()) {
+            Intent i = new Intent(this, MainActivity.class);
+            i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            startActivity(i);
+        }
 
     }
 
@@ -36,10 +54,62 @@ public class LoginActivity extends AppCompatActivity {
 
         switch (id) {
             case R.id.btnLoginSubmit:
-                Intent i = new Intent(this, MainActivity.class);
-                i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                startActivity(i);
+
+                if (validate.validateString(txt_username.getText().toString())) {
+                    txt_username.setError("Enter Username");
+                    return;
+                } else {
+                    txt_username.setError(null);
+                }
+                if (validate.validateString(txt_password.getText().toString())) {
+                    txt_password.setError("Enter Password");
+                    return;
+                } else {
+                    txt_username.setError(null);
+                }
+
+
+                if (txt_username.getText().toString().equalsIgnoreCase("admin") && txt_password.getText().toString().equalsIgnoreCase("admin")) {
+                    Intent i = new Intent(this, MainActivity.class);
+                  //  i.putExtra(USERNAME, txt_username.getText().toString());
+                    i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                    sessionManager.setLogin(true,"admin",true);
+                  //  i.putExtra(ISADMIN, true);
+                    startActivity(i);
+                } else {
+
+                    List<User> user = User.find(User.class, "name = ?", txt_username.getText().toString());
+
+                    boolean loginStatus = false, isAdmin = false;
+
+                    String username = "", type = "";
+
+                    for (int j = 0; j < user.size(); j++) {
+                        if (user.get(j).getPassword().equals(txt_password.getText().toString())) {
+                            loginStatus = true;
+                            username = user.get(j).getName();
+                            type = user.get(j).getType();
+                        }
+                    }
+
+                    if (type.equals("admin")) {
+                        isAdmin = true;
+                    }
+
+                    if (loginStatus) {
+                        Intent i = new Intent(this, MainActivity.class);
+                       // i.putExtra(USERNAME, username);
+                        i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                        sessionManager.setLogin(true,username,isAdmin);
+                       // i.putExtra(ISADMIN, isAdmin);
+                        startActivity(i);
+                    } else {
+                        Toast.makeText(getApplicationContext(), "Wrong credential", Toast.LENGTH_SHORT).show();
+                    }
+
+                }
+
+
                 break;
         }
     }
