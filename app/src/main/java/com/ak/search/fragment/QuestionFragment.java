@@ -1,8 +1,11 @@
 package com.ak.search.fragment;
 
 
+import android.app.Activity;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,6 +15,8 @@ import android.widget.RadioGroup;
 import android.widget.TextView;
 
 import com.ak.search.R;
+import com.ak.search.app.SaveAnswer;
+import com.ak.search.model.Answers;
 import com.ak.search.model.Questions;
 
 import butterknife.BindView;
@@ -40,8 +45,12 @@ public class QuestionFragment extends Fragment {
     @BindView(R.id.tv_question)
     TextView tv_question;
 
-    public static final QuestionFragment newInstance(Questions message)
-    {
+    SaveAnswer answer;
+
+    public Answers ans;
+
+
+    public static final QuestionFragment newInstance(Questions message) {
         QuestionFragment f = new QuestionFragment();
         Bundle bdl = new Bundle(1);
         bdl.putSerializable(EXTRA_MESSAGE, message);
@@ -51,22 +60,25 @@ public class QuestionFragment extends Fragment {
 
 
     @Override
-
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
         View v = inflater.inflate(R.layout.fragment_question, container, false);
-        ButterKnife.bind(this,v);
+        ButterKnife.bind(this, v);
 
         Questions message = (Questions) getArguments().getSerializable(EXTRA_MESSAGE);
 
         tv_question.setText(message.getQuestion());
 
+        ans=new Answers();
+
+
 
         if (!message.getOpt()) {
             rg_option.setVisibility(GONE);
+            ans.setSelectedopt(-1);
         } else {
-            if(message.getOptions().size()>1) {
+            if (message.getOptions().size() > 1) {
                 rb_opt1.setText(message.getOptions().get(0).getOpt());
                 rb_opt2.setText(message.getOptions().get(1).getOpt());
             }
@@ -76,14 +88,14 @@ public class QuestionFragment extends Fragment {
                 }
             }*/
 
-            if(message.getOptions().size()>0){
+            if (message.getOptions().size() > 0) {
                 rb_opt1.setText(message.getOptions().get(0).getOpt());
-            }else if(message.getOptions().size()>1){
+            } else if (message.getOptions().size() > 1) {
                 rb_opt1.setText(message.getOptions().get(0).getOpt());
                 rb_opt2.setText(message.getOptions().get(1).getOpt());
             }
             if (message.getOptions().size() > 2) {
-                for(int i=2; i<message.getOptions().size(); i++) {
+                for (int i = 2; i < message.getOptions().size(); i++) {
                     RadioButton rb = new RadioButton(getContext());
                     rb.setLayoutParams(new ViewGroup.LayoutParams(
                             ViewGroup.LayoutParams.MATCH_PARENT,
@@ -98,10 +110,64 @@ public class QuestionFragment extends Fragment {
 
         if (!message.getText()) {
             et_answer.setVisibility(GONE);
+            ans.setAns("-");
         }
+
+        ans.setQuestionid(message.getId());
+
+        et_answer.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+                ans.setAns(String.valueOf(editable));
+
+                answer.onAnswerSave(ans);
+            }
+        });
+
+        rg_option.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup radioGroup, int i) {
+
+                int id=rg_option.getCheckedRadioButtonId();
+                View radioButton = rg_option.findViewById(id);
+                ans.setSelectedopt(rg_option.indexOfChild(radioButton));
+
+                answer.onAnswerSave(ans);
+            }
+        });
+
 
 
         return v;
 
     }
+
+
+    @Override
+    public void onAttach(Activity activity) {
+        try {
+            answer = (SaveAnswer) getActivity();
+        } catch (ClassCastException e) {
+            throw new ClassCastException(activity.toString() + " must implement OnFragmentInteractionListener");
+        }
+        super.onAttach(activity);
+    }
+
+
+    /*public static Answers getAns()
+    {
+
+        return ans;
+    }*/
+
 }

@@ -9,9 +9,11 @@ import android.util.Log;
 
 import com.ak.search.adapter.GetQuestionsAdapter;
 import com.ak.search.adapter.GetSurveyAdapter;
+import com.ak.search.adapter.PatientAdapter;
 import com.ak.search.adapter.QuestionsAdapter;
 import com.ak.search.app.Validate;
 import com.ak.search.model.Options;
+import com.ak.search.model.Patients;
 import com.ak.search.model.Questions;
 import com.ak.search.model.Survey;
 
@@ -24,10 +26,10 @@ import butterknife.ButterKnife;
 public class GetSurveyActivity extends AppCompatActivity {
 
     long surveyId;
-    private List<Questions> questionsList;
+    private List<Patients> patientList;
     @BindView(R.id.rv_questions)
     RecyclerView recyclerView;
-    public GetQuestionsAdapter mAdapter;
+    public PatientAdapter mAdapter;
 
 
     @Override
@@ -35,9 +37,9 @@ public class GetSurveyActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_get_survey);
         ButterKnife.bind(this);
-        questionsList = new ArrayList<>();
+        patientList = new ArrayList<>();
 
-        if (getIntent().getExtras() != null) {
+       /* if (getIntent().getExtras() != null) {
             surveyId = getIntent().getExtras().getLong("surveyId");
 
             questionsList = Questions.find(Questions.class, "surveyid = ?", String.valueOf(surveyId));
@@ -45,17 +47,19 @@ public class GetSurveyActivity extends AppCompatActivity {
             List<Options> opt = new ArrayList<>();
             for (int i = 0; i < questionsList.size(); i++) {
                 opt = questionsList.get(i).getOptions(String.valueOf(questionsList.get(i).getId()));
-            }
+            }*/
 
-            mAdapter = new GetQuestionsAdapter(this, questionsList);
+        patientList = Patients.listAll(Patients.class);
+
+            mAdapter = new PatientAdapter(this, patientList);
             RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getApplicationContext());
             recyclerView.setLayoutManager(mLayoutManager);
             recyclerView.setItemAnimator(new DefaultItemAnimator());
             recyclerView.setAdapter(mAdapter);
 
-            Log.v("GET SURVEY", "" + surveyId);
+         /*   Log.v("GET SURVEY", "" + surveyId);
 
-        }
+        }*/
 
     }
 }

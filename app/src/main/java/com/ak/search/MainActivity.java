@@ -151,7 +151,7 @@ public class MainActivity extends AppCompatActivity {
                 break;
 
             case R.id.btn_data:
-                //startActivity(new Intent(this,ItemListActivity.class));
+                startActivity(new Intent(this,GetSurveyActivity.class));
                 break;
 
             case R.id.btn_start_survey:
@@ -173,6 +173,7 @@ public class MainActivity extends AppCompatActivity {
 
                 Intent i=new Intent(this, QuestionsActivity.class);
                 i.putExtra("surveyId",surveyId);
+                i.putExtra("patientName",txt_patient_name.getText().toString());
                 startActivity(i);
 
                 break;

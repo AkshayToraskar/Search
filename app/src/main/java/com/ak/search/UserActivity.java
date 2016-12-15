@@ -22,7 +22,7 @@ import butterknife.ButterKnife;
 
 public class UserActivity extends AppCompatActivity {
 
-    private List<User> usersList = new ArrayList<>();
+    private List<User> usersList;
     @BindView(R.id.rv_user)
     RecyclerView recyclerView;
     private UsersAdapter mAdapter;
@@ -61,7 +61,8 @@ public class UserActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        usersList = User.listAll(User.class);
+        usersList.clear();
+        usersList.addAll(User.listAll(User.class));
         mAdapter.notifyDataSetChanged();
     }
 }

@@ -19,6 +19,8 @@ public class Questions extends SugarRecord implements Serializable {
 
     @Ignore
     List<Options> options;
+    @Ignore
+    Answers answers;
 
 
     Boolean text, opt;
@@ -36,6 +38,14 @@ public class Questions extends SugarRecord implements Serializable {
 
     public void setSurveyid(String surveyid) {
         this.surveyid = surveyid;
+    }
+
+    public Answers getAnswers() {
+        return answers;
+    }
+
+    public void setAnswers(Answers answers) {
+        this.answers = answers;
     }
 
     /*public void setOptions(List<Options> options) {

@@ -17,6 +17,7 @@ import com.ak.search.R;
 import com.ak.search.model.Options;
 import com.ak.search.model.Questions;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static android.view.View.GONE;
@@ -43,43 +44,8 @@ public class GetQuestionsAdapter extends RecyclerView.Adapter<GetQuestionsAdapte
             rgOption = (RadioGroup) view.findViewById(R.id.rg_options);
             rbOpt1 = (RadioButton) view.findViewById(R.id.rb_opt1);
             rbOpt2 = (RadioButton) view.findViewById(R.id.rb_opt2);
-
-
-
-            //List<Options> opt = Options.find(Options.class, "questionid = ?", String.valueOf());
-/*
-            if(opt.size()>0){
-                rbOpt1.setText(opt.get(0).getOpt());
-            }else if(opt.size()>1){
-                rbOpt1.setText(opt.get(0).getOpt());
-                rbOpt2.setText(opt.get(1).getOpt());
-            }
-            if (opt.size() > 2) {
-                for(int i=1; i<opt.size(); i++) {
-                    RadioButton rb = new RadioButton(context);
-                    rb.setLayoutParams(new ViewGroup.LayoutParams(
-                            ViewGroup.LayoutParams.MATCH_PARENT,
-                            ViewGroup.LayoutParams.WRAP_CONTENT));
-                    rb.setText(opt.get(i).getOpt());
-                    rgOption.addView(rb);
-                    //allEds.add(text);
-                }
-            }*/
-
-            /*view.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-
-                    Intent i = new Intent(context, AddQuestionActivity.class);
-                    i.putExtra("questionId", questionsList.get(getPosition()).getId());
-                    context.startActivity(i);
-                }
-            });*/
-
-
         }
     }
-
 
     public GetQuestionsAdapter(Context context, List<Questions> questionsList) {
         this.questionsList = questionsList;
@@ -90,59 +56,55 @@ public class GetQuestionsAdapter extends RecyclerView.Adapter<GetQuestionsAdapte
     public MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View itemView = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.questions_list_row, parent, false);
-
         return new MyViewHolder(itemView);
     }
 
     @Override
     public void onBindViewHolder(MyViewHolder holder, int position) {
+
+        holder.setIsRecyclable(false);
         Questions questions = questionsList.get(position);
         holder.tvQuestion.setText(questions.getQuestion());
-
-        Log.v("asdff a",""+questionsList.get(position).getId());
-
-
-        List<Options> opt = Options.find(Options.class, "questionid = ?", String.valueOf(questionsList.get(position).getId()));
-
-
-
-
+        //Log.v("asdff a", "" + questionsList.get(position).getId());
+        List<RadioButton> allRb = new ArrayList<>();
 
         if (!questions.getOpt()) {
             holder.rgOption.setVisibility(GONE);
         } else {
-            if(opt.size()>1) {
-                holder.rbOpt1.setText(opt.get(0).getOpt());
-                holder.rbOpt2.setText(opt.get(1).getOpt());
-            }
-            /*if (opt.size() > 2) {
-                for (int i = 2; i < opt.size(); i++) {
+            if (questionsList.get(position).getOptions().size() >= 2) {
+                holder.rbOpt1.setText(questions.getOptions().get(0).getOpt());
+                holder.rbOpt2.setText(questions.getOptions().get(1).getOpt());
 
-                }
-            }*/
-
-            if(opt.size()>0){
-                holder.rbOpt1.setText(opt.get(0).getOpt());
-            }else if(opt.size()>1){
-                holder.rbOpt1.setText(opt.get(0).getOpt());
-                holder.rbOpt2.setText(opt.get(1).getOpt());
+                allRb.add(holder.rbOpt1);
+                allRb.add(holder.rbOpt2);
             }
-            if (opt.size() > 2) {
-                for(int i=2; i<opt.size(); i++) {
+
+            if (questions.getOptions().size() > 2) {
+                for (int i = 2; i < questionsList.get(position).getOptions().size(); i++) {
                     RadioButton rb = new RadioButton(context);
                     rb.setLayoutParams(new ViewGroup.LayoutParams(
                             ViewGroup.LayoutParams.MATCH_PARENT,
                             ViewGroup.LayoutParams.WRAP_CONTENT));
-                    rb.setText(opt.get(i).getOpt());
+                    rb.setText(questionsList.get(position).getOptions().get(i).getOpt());
                     holder.rgOption.addView(rb);
-                    //allEds.add(text);
+                    allRb.add(rb);
                 }
+                //allRb.get(questionsList.get(position).getAnswers().getSelectedOpt()).setChecked(true);
+            }
+
+            if (questions.getAnswers() != null) {
+                allRb.get(questionsList.get(position).getAnswers().getSelectedopt()).setChecked(true);
+                Log.v("sadf--------", "asdf " + questionsList.get(position).getAnswers().getSelectedopt());
             }
 
         }
 
         if (!questions.getText()) {
             holder.etAnswer.setVisibility(GONE);
+        } else {
+            if (questions.getAnswers() != null) {
+                holder.etAnswer.setText(questions.getAnswers().getAns());
+            }
         }
 
     }
@@ -150,5 +112,12 @@ public class GetQuestionsAdapter extends RecyclerView.Adapter<GetQuestionsAdapte
     @Override
     public int getItemCount() {
         return questionsList.size();
+    }
+
+
+    public void update(List<Questions> modelList) {
+        questionsList.clear();
+        questionsList.addAll(modelList);
+        notifyDataSetChanged();
     }
 }

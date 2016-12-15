@@ -1,8 +1,11 @@
 package com.ak.search;
 
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
@@ -11,9 +14,12 @@ import android.widget.RadioButton;
 import android.widget.Toast;
 
 import com.ak.search.app.Validate;
+import com.ak.search.model.Options;
 import com.ak.search.model.Questions;
 import com.ak.search.model.Survey;
 import com.ak.search.model.User;
+
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -39,6 +45,8 @@ public class AddUserActivity extends AppCompatActivity {
     String userId;
     User user;
 
+    boolean update=false;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,6 +66,7 @@ public class AddUserActivity extends AppCompatActivity {
                 rb_admin.setChecked(true);
 
             btn_login.setText("Update");
+            update=true;
 
         }
 
@@ -66,17 +75,51 @@ public class AddUserActivity extends AppCompatActivity {
 
     }
 
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_user, menu);
+        if (!update) {
+            menu.getItem(0).setVisible(false);
+        }
+        return true;
+    }
+
+
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
 
         int id = item.getItemId();
         switch (id) {
 
-
             case android.R.id.home:
-
                 finish();
                 break;
+
+
+            case R.id.action_delete_user:
+                new AlertDialog.Builder(this)
+                        .setTitle("Delete")
+                        .setMessage("Would you like to delete this User ?")
+                        .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+
+                                User user = User.findById(User.class, Long.parseLong(userId));
+                                user.delete();
+
+                                finish();
+                            }
+                        })
+                        .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+                                // user doesn't want to logout
+                            }
+                        })
+                        .show();
+
+                break;
+
         }
         return super.onOptionsItemSelected(item);
     }
