@@ -1,11 +1,16 @@
 package com.ak.search;
 
+import android.content.Context;
+import android.content.DialogInterface;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -18,6 +23,7 @@ import com.ak.search.model.Answers;
 import com.ak.search.model.Options;
 import com.ak.search.model.Patients;
 import com.ak.search.model.Questions;
+import com.ak.search.model.Survey;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -51,7 +57,7 @@ public class QuestionsActivity extends AppCompatActivity implements SaveAnswer {
     QuestionReviewFragment q;
 
 
-    public static HashMap<Long, Answers> answers;
+    public static HashMap<Integer, Answers> answers;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,13 +67,15 @@ public class QuestionsActivity extends AppCompatActivity implements SaveAnswer {
 
         answers = new HashMap<>();
 
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
         if (getIntent().getExtras() != null) {
             surveyId = getIntent().getExtras().getLong("surveyId");
             patientName = getIntent().getExtras().getString("patientName");
 
             Patients patients = new Patients();
             patients.setPatientname(patientName);
-            patients.setSurveyid(surveyId);
+            patients.setSurveyid(String.valueOf(surveyId));
             patientId = patients.save();
 
             questionsList = Questions.find(Questions.class, "surveyid = ?", String.valueOf(surveyId));
@@ -122,6 +130,7 @@ public class QuestionsActivity extends AppCompatActivity implements SaveAnswer {
 
                     //Log.v("ans "," "+answers.get(0).getQuestionId());
 
+
                     for (Map.Entry m : answers.entrySet()) {
                         Answers an = (Answers) m.getValue();
                         an.save();
@@ -130,6 +139,8 @@ public class QuestionsActivity extends AppCompatActivity implements SaveAnswer {
                     }
 
                     Toast.makeText(getApplicationContext(), "DONE", Toast.LENGTH_SHORT).show();
+
+
 
                     finish();
                 }
@@ -170,7 +181,7 @@ public class QuestionsActivity extends AppCompatActivity implements SaveAnswer {
             int currentPage = pager.getCurrentItem();
 
             txt_page_count.setText(currentPage + 1 + "/" + (fragments.size() - 1));
-
+            Survey survey = Survey.findById(Survey.class, (int) surveyId);
 
             // changing the next button text 'NEXT' / 'GOT IT'
             if (position == fragments.size() - 1) {
@@ -180,6 +191,13 @@ public class QuestionsActivity extends AppCompatActivity implements SaveAnswer {
                 txt_page_count.setVisibility(View.INVISIBLE);
                 //btn_next.setVisibility(View.VISIBLE);
                 btn_previous.setVisibility(View.VISIBLE);
+
+
+                ((InputMethodManager)getSystemService(INPUT_METHOD_SERVICE))
+                        .hideSoftInputFromWindow(pager.getWindowToken(), 0);
+
+                getSupportActionBar().setTitle("Review Questions");
+
             } else if (position == 0) {
                 // still pages are left
                 // btn_next.setText(getString(R.string.next));
@@ -189,12 +207,18 @@ public class QuestionsActivity extends AppCompatActivity implements SaveAnswer {
                 txt_page_count.setVisibility(View.VISIBLE);
                 //btn_next.setVisibility(View.VISIBLE);
                 btn_previous.setVisibility(View.INVISIBLE);
+
+                getSupportActionBar().setTitle(survey.getName() + " ");
             } else {
 
                 btn_next.setText("NEXT");
                 txt_page_count.setVisibility(View.VISIBLE);
                 //btn_next.setVisibility(View.VISIBLE);
                 btn_previous.setVisibility(View.VISIBLE);
+
+
+                getSupportActionBar().setTitle(survey.getName() + " ");
+
             }
         }
 
@@ -235,13 +259,54 @@ public class QuestionsActivity extends AppCompatActivity implements SaveAnswer {
     @Override
     public void onAnswerSave(Answers ans) {
 
-        ans.setPatientid(patientId);
-        answers.put(ans.getQuestionid(), ans);
+        ans.setPatientid(String.valueOf(patientId));
+
+        answers.put(Integer.parseInt(ans.getQuestionid()), ans);
 
         if (q.updateReviewAnswer != null) {
             q.updateReviewAnswer.onReviewUpdate(answers);
         }
 
         //Log.v("asdf",""+ans.getAns());
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        int id = item.getItemId();
+
+        switch (id) {
+            case android.R.id.home:
+                discardSurvey();
+                break;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
+
+    @Override
+    public void onBackPressed() {
+        //super.onBackPressed();
+        discardSurvey();
+    }
+
+    public void discardSurvey() {
+        new AlertDialog.Builder(this)
+                .setTitle("Discard")
+                .setMessage("Would you like to Discard Survey?")
+                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        Patients patients = Patients.findById(Patients.class, patientId);
+                        patients.delete();
+                        finish();
+                    }
+                })
+                .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        // user doesn't want to logout
+                    }
+                })
+                .show();
     }
 }

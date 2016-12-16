@@ -6,6 +6,7 @@ import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.MenuItem;
 
 import com.ak.search.adapter.GetQuestionsAdapter;
 import com.ak.search.adapter.GetSurveyAdapter;
@@ -39,6 +40,10 @@ public class GetSurveyActivity extends AppCompatActivity {
         ButterKnife.bind(this);
         patientList = new ArrayList<>();
 
+        getSupportActionBar().setTitle("Patient List");
+
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
        /* if (getIntent().getExtras() != null) {
             surveyId = getIntent().getExtras().getLong("surveyId");
 
@@ -51,15 +56,34 @@ public class GetSurveyActivity extends AppCompatActivity {
 
         patientList = Patients.listAll(Patients.class);
 
-            mAdapter = new PatientAdapter(this, patientList);
-            RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getApplicationContext());
-            recyclerView.setLayoutManager(mLayoutManager);
-            recyclerView.setItemAnimator(new DefaultItemAnimator());
-            recyclerView.setAdapter(mAdapter);
+        mAdapter = new PatientAdapter(this, patientList);
+        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getApplicationContext());
+        recyclerView.setLayoutManager(mLayoutManager);
+        recyclerView.setItemAnimator(new DefaultItemAnimator());
+        recyclerView.setAdapter(mAdapter);
 
          /*   Log.v("GET SURVEY", "" + surveyId);
 
         }*/
 
     }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        int id=item.getItemId();
+
+        switch (id)
+        {
+            case android.R.id.home:
+                finish();
+                break;
+        }
+
+
+        return super.onOptionsItemSelected(item);
+
+
+    }
+
 }

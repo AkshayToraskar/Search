@@ -3,6 +3,7 @@ package com.ak.search.fragment;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -10,6 +11,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 
 import com.ak.search.QuestionsActivity;
 import com.ak.search.R;
@@ -57,6 +59,8 @@ public class QuestionReviewFragment extends Fragment implements UpdateReviewAnsw
         updateReviewAnswer = this;
 
 
+
+
         if (getArguments() != null) {
             surveyId = getArguments().getLong("surveyId");
 
@@ -87,7 +91,7 @@ public class QuestionReviewFragment extends Fragment implements UpdateReviewAnsw
     }
 
     @Override
-    public void onReviewUpdate(HashMap<Long, Answers> answers) {
+    public void onReviewUpdate(HashMap<Integer, Answers> answers) {
 
         //getQuestionList();
         questionsList.clear();
@@ -98,7 +102,7 @@ public class QuestionReviewFragment extends Fragment implements UpdateReviewAnsw
 
 
             for (int i = 0; i < questionsList.size(); i++) {
-                if (m.getKey() == questionsList.get(i).getId()) {
+                if (Long.parseLong(String.valueOf(m.getKey())) == questionsList.get(i).getId()) {
                     Answers an = (Answers) m.getValue();
                     questionsList.get(i).setAnswers(an);
                 }

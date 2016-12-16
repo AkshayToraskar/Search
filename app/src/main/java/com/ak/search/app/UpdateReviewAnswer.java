@@ -10,5 +10,5 @@ import java.util.HashMap;
 
 public interface UpdateReviewAnswer {
 
-    public void onReviewUpdate(HashMap<Long,Answers> answers);
+    public void onReviewUpdate(HashMap<Integer,Answers> answers);
 }

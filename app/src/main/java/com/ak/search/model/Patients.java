@@ -8,15 +8,14 @@ import com.orm.SugarRecord;
 
 public class Patients extends SugarRecord {
 
-    long surveyid;
 
-    String patientname;
+    String patientname,surveyid;
 
-    public long getSurveyid() {
+    public String getSurveyid() {
         return surveyid;
     }
 
-    public void setSurveyid(long surveyid) {
+    public void setSurveyid(String surveyid) {
         this.surveyid = surveyid;
     }
 

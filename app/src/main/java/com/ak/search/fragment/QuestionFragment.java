@@ -4,6 +4,7 @@ package com.ak.search.fragment;
 import android.app.Activity;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
@@ -18,6 +19,7 @@ import com.ak.search.R;
 import com.ak.search.app.SaveAnswer;
 import com.ak.search.model.Answers;
 import com.ak.search.model.Questions;
+import com.ak.search.model.Survey;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -66,7 +68,14 @@ public class QuestionFragment extends Fragment {
         View v = inflater.inflate(R.layout.fragment_question, container, false);
         ButterKnife.bind(this, v);
 
+
+
+
+
         Questions message = (Questions) getArguments().getSerializable(EXTRA_MESSAGE);
+
+        //Survey survey=Survey.findById(Survey.class,Integer.parseInt(message.getSurveyid()));
+        //((AppCompatActivity)getActivity()).getSupportActionBar().setTitle(survey.getName()+"");
 
         tv_question.setText(message.getQuestion());
 
@@ -113,7 +122,7 @@ public class QuestionFragment extends Fragment {
             ans.setAns("-");
         }
 
-        ans.setQuestionid(message.getId());
+        ans.setQuestionid(String.valueOf(message.getId()));
 
         et_answer.addTextChangedListener(new TextWatcher() {
             @Override

@@ -44,6 +44,8 @@ public class GetQuestionsAdapter extends RecyclerView.Adapter<GetQuestionsAdapte
             rgOption = (RadioGroup) view.findViewById(R.id.rg_options);
             rbOpt1 = (RadioButton) view.findViewById(R.id.rb_opt1);
             rbOpt2 = (RadioButton) view.findViewById(R.id.rb_opt2);
+
+
         }
     }
 
@@ -105,6 +107,11 @@ public class GetQuestionsAdapter extends RecyclerView.Adapter<GetQuestionsAdapte
             if (questions.getAnswers() != null) {
                 holder.etAnswer.setText(questions.getAnswers().getAns());
             }
+        }
+
+        holder.etAnswer.setEnabled(false);
+        for (int i = 0; i < holder.rgOption.getChildCount(); i++) {
+            holder.rgOption.getChildAt(i).setEnabled(false);
         }
 
     }

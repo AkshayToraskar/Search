@@ -98,7 +98,8 @@
         -->
         <activity android:name=".GetSurveyActivity" />
         <activity android:name=".QuestionsActivity" />
-        <activity android:name=".ShowSurveyActivity"></activity>
+        <activity android:name=".ShowSurveyActivity"
+            android:windowSoftInputMode="stateAlwaysHidden"></activity>
     </application>
 
 </manifest>

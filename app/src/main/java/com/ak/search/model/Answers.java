@@ -10,24 +10,24 @@ import com.orm.dsl.Unique;
 public class Answers extends SugarRecord {
 
 
-    long questionid, patientid;
+    String questionid, patientid;
     int selectedopt;
     String ans;
 
 
-    public long getQuestionid() {
+    public String getQuestionid() {
         return questionid;
     }
 
-    public void setQuestionid(long questionid) {
+    public void setQuestionid(String questionid) {
         this.questionid = questionid;
     }
 
-    public long getPatientid() {
+    public String getPatientid() {
         return patientid;
     }
 
-    public void setPatientid(long patientid) {
+    public void setPatientid(String patientid) {
         this.patientid = patientid;
     }
 

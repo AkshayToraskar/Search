@@ -6,11 +6,13 @@ import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.MenuItem;
 
 import com.ak.search.adapter.GetQuestionsAdapter;
 import com.ak.search.model.Answers;
 import com.ak.search.model.Options;
 import com.ak.search.model.Questions;
+import com.ak.search.model.Survey;
 
 import java.util.List;
 
@@ -19,7 +21,8 @@ import butterknife.ButterKnife;
 
 public class ShowSurveyActivity extends AppCompatActivity {
 
-    long surveyId;
+    String surveyId;
+    Long patientId;
     private List<Questions> questionsList;
     @BindView(R.id.rv_questions)
     RecyclerView recyclerView;
@@ -31,9 +34,16 @@ public class ShowSurveyActivity extends AppCompatActivity {
         setContentView(R.layout.activity_show_survey);
         ButterKnife.bind(this);
 
-        if(getIntent().getExtras()!=null){
-            surveyId = getIntent().getExtras().getLong("surveyId");
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
+
+        if (getIntent().getExtras() != null) {
+            surveyId = getIntent().getExtras().getString("surveyId");
+            patientId = getIntent().getExtras().getLong("patientId");
+
+
+            Survey survey=Survey.findById(Survey.class,Integer.parseInt(surveyId));
+            getSupportActionBar().setTitle(survey.getName()+" ");
 
             mAdapter = new GetQuestionsAdapter(this, getQuestionList());
             RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(this);
@@ -59,14 +69,31 @@ public class ShowSurveyActivity extends AppCompatActivity {
             questionsList.get(i).setOptions(opt);
 
 
-            List<Answers> answers = Answers.find(Answers.class, "questionId = ?", String.valueOf(questionsList.get(i).getId()));
+            List<Answers> answers = Answers.find(Answers.class, "patientid = ? and questionid = ?", String.valueOf(patientId),String.valueOf(questionsList.get(i).getId()));
             questionsList.get(i).setAnswers(answers.get(0));
 
         }
 
 
-
         return questionsList;
     }
 
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        int id=item.getItemId();
+
+        switch (id)
+        {
+            case android.R.id.home:
+                finish();
+                break;
+        }
+
+
+        return super.onOptionsItemSelected(item);
+
+
+    }
 }
