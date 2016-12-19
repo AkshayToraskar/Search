@@ -55,7 +55,7 @@ public class QuestionsActivity extends AppCompatActivity implements SaveAnswer {
     @BindView(R.id.txt_page_count)
     TextView txt_page_count;
     QuestionReviewFragment q;
-
+    Survey survey;
 
     public static HashMap<Integer, Answers> answers;
 
@@ -72,6 +72,10 @@ public class QuestionsActivity extends AppCompatActivity implements SaveAnswer {
         if (getIntent().getExtras() != null) {
             surveyId = getIntent().getExtras().getLong("surveyId");
             patientName = getIntent().getExtras().getString("patientName");
+
+
+            survey = Survey.findById(Survey.class, (int) surveyId);
+            getSupportActionBar().setTitle(survey.getName() + " ");
 
             Patients patients = new Patients();
             patients.setPatientname(patientName);
@@ -181,7 +185,7 @@ public class QuestionsActivity extends AppCompatActivity implements SaveAnswer {
             int currentPage = pager.getCurrentItem();
 
             txt_page_count.setText(currentPage + 1 + "/" + (fragments.size() - 1));
-            Survey survey = Survey.findById(Survey.class, (int) surveyId);
+
 
             // changing the next button text 'NEXT' / 'GOT IT'
             if (position == fragments.size() - 1) {
