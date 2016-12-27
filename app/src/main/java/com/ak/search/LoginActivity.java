@@ -3,6 +3,7 @@ package com.ak.search;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.EditText;
@@ -26,6 +27,9 @@ public class LoginActivity extends AppCompatActivity {
     @BindView(R.id.txt_password)
     EditText txt_password;
 
+    @BindView(R.id.toolbar)
+    Toolbar toolbar;
+
     public static String USERNAME = "username", ISADMIN = "is_admin";
     private SessionManager sessionManager;
     private Validate validate;
@@ -36,6 +40,8 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
         ButterKnife.bind(this);
+
+        setSupportActionBar(toolbar);
 
         validate = new Validate();
         sessionManager = new SessionManager(this);
@@ -71,10 +77,10 @@ public class LoginActivity extends AppCompatActivity {
 
                 if (txt_username.getText().toString().equalsIgnoreCase("admin") && txt_password.getText().toString().equalsIgnoreCase("admin")) {
                     Intent i = new Intent(this, MainActivity.class);
-                  //  i.putExtra(USERNAME, txt_username.getText().toString());
+                    //  i.putExtra(USERNAME, txt_username.getText().toString());
                     i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                    sessionManager.setLogin(true,"admin",true);
-                  //  i.putExtra(ISADMIN, true);
+                    sessionManager.setLogin(true, "admin", 1);
+                    //  i.putExtra(ISADMIN, true);
                     startActivity(i);
                 } else {
 
@@ -82,7 +88,8 @@ public class LoginActivity extends AppCompatActivity {
 
                     boolean loginStatus = false, isAdmin = false;
 
-                    String username = "", type = "";
+                    String username = "";
+                    int type = 0;
 
                     for (int j = 0; j < user.size(); j++) {
                         if (user.get(j).getPassword().equals(txt_password.getText().toString())) {
@@ -92,16 +99,16 @@ public class LoginActivity extends AppCompatActivity {
                         }
                     }
 
-                    if (type.equals("admin")) {
+                    /*if (type == 1) {
                         isAdmin = true;
-                    }
+                    }*/
 
                     if (loginStatus) {
                         Intent i = new Intent(this, MainActivity.class);
-                       // i.putExtra(USERNAME, username);
+                        // i.putExtra(USERNAME, username);
                         i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                        sessionManager.setLogin(true,username,isAdmin);
-                       // i.putExtra(ISADMIN, isAdmin);
+                        sessionManager.setLogin(true, username, type);
+                        // i.putExtra(ISADMIN, isAdmin);
                         startActivity(i);
                     } else {
                         Toast.makeText(getApplicationContext(), "Wrong credential", Toast.LENGTH_SHORT).show();

@@ -11,6 +11,8 @@ public class Patients extends SugarRecord {
 
     String patientname,surveyid;
 
+
+
     public String getSurveyid() {
         return surveyid;
     }

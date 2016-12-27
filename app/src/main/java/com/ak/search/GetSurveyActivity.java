@@ -1,11 +1,13 @@
 package com.ak.search;
 
+import android.os.Environment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
@@ -16,13 +18,25 @@ import com.ak.search.adapter.GetQuestionsAdapter;
 import com.ak.search.adapter.GetSurveyAdapter;
 import com.ak.search.adapter.PatientAdapter;
 import com.ak.search.adapter.QuestionsAdapter;
+import com.ak.search.app.CSVUtils;
 import com.ak.search.app.Validate;
+import com.ak.search.model.Answers;
 import com.ak.search.model.Options;
 import com.ak.search.model.Patients;
 import com.ak.search.model.Questions;
 import com.ak.search.model.Survey;
+import com.opencsv.CSVWriter;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.math.BigDecimal;
+import java.text.DateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 
 import butterknife.BindView;
@@ -133,12 +147,60 @@ public class GetSurveyActivity extends AppCompatActivity {
             case android.R.id.home:
                 finish();
                 break;
+
+            case R.id.action_export:
+                generateCSV();
+                break;
         }
 
 
         return super.onOptionsItemSelected(item);
 
 
+    }
+
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_get_survey, menu);
+
+
+        return true;
+    }
+
+    public void generateCSV() {
+
+        try {
+
+
+
+            File myDirectory = new File(Environment.getExternalStorageDirectory(), "SEARCH");
+
+            if(!myDirectory.exists()) {
+                myDirectory.mkdirs();
+            }
+
+            String currentDateTimeString = DateFormat.getDateTimeInstance().format(new Date());
+
+
+            String csv = Environment.getExternalStorageDirectory().getAbsolutePath() +File.separator +"SEARCH"+ File.separator +"PatientData "+currentDateTimeString+".csv";
+            CSVWriter writer = null;
+            writer = new CSVWriter(new FileWriter(csv));
+
+            List<String[]> data = new ArrayList<String[]>();
+            data.add(new String[]{"India", "New Delhi"});
+            data.add(new String[]{"United States", "Washington D.C"});
+            data.add(new String[]{"Germany", "Berlin"});
+            data.add(new String[]{"asdf", "23423s"});
+            data.add(new String[]{"Germ3423any", "asdf"});
+            writer.writeAll(data);
+            writer.close();
+
+            Log.v("asdf","SUCCESS");
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
 }

@@ -200,7 +200,7 @@ public class QuestionsActivity extends AppCompatActivity implements SaveAnswer {
                 ((InputMethodManager)getSystemService(INPUT_METHOD_SERVICE))
                         .hideSoftInputFromWindow(pager.getWindowToken(), 0);
 
-                getSupportActionBar().setTitle("Review Questions");
+                getSupportActionBar().setTitle("Review "+survey.getName());
 
             } else if (position == 0) {
                 // still pages are left

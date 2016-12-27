@@ -34,10 +34,10 @@ public class SessionManager {
         editor = pref.edit();
     }
 
-    public void setLogin(boolean isLoggedIn,String Username, boolean Type) {
+    public void setLogin(boolean isLoggedIn,String Username, int Type) {
         editor.putBoolean(KEY_IS_LOGGEDIN, isLoggedIn);
         editor.putString(KEY_USERNAME,Username);
-        editor.putBoolean(KEY_TYPE,Type);
+        editor.putInt(KEY_TYPE,Type);
         editor.commit();
         Log.d(TAG, "User login session modified!");
     }
@@ -46,14 +46,19 @@ public class SessionManager {
         return  pref.getString(KEY_USERNAME,"");
     }
 
-    public boolean isAdmin(){
+    /*public boolean isAdmin(){
         return  pref.getBoolean(KEY_TYPE,false);
+    }*/
+
+
+    public int getLoginType()
+    {
+        return pref.getInt(KEY_TYPE,0);
     }
 
     public boolean isLoggedIn(){
         return pref.getBoolean(KEY_IS_LOGGEDIN, false);
     }
-
 
 
     public void setSurveyId(int id)

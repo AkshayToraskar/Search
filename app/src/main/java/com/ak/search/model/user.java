@@ -8,7 +8,10 @@ import com.orm.SugarRecord;
 
 public class User extends SugarRecord {
 
-    String name, password, type;
+    String name, password;
+
+    //1-Admin, 2-Superviser, 3-User
+    int type;
 
     public User() {
 
@@ -30,11 +33,11 @@ public class User extends SugarRecord {
         this.password = password;
     }
 
-    public String getType() {
+    public int getType() {
         return type;
     }
 
-    public void setType(String type) {
+    public void setType(int type) {
         this.type = type;
     }
 }

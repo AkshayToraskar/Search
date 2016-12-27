@@ -11,6 +11,7 @@ import android.view.MenuItem;
 import com.ak.search.adapter.GetQuestionsAdapter;
 import com.ak.search.model.Answers;
 import com.ak.search.model.Options;
+import com.ak.search.model.Patients;
 import com.ak.search.model.Questions;
 import com.ak.search.model.Survey;
 
@@ -42,8 +43,8 @@ public class ShowSurveyActivity extends AppCompatActivity {
             patientId = getIntent().getExtras().getLong("patientId");
 
 
-            Survey survey=Survey.findById(Survey.class,Integer.parseInt(surveyId));
-            getSupportActionBar().setTitle(survey.getName()+" ");
+            Patients patients=Patients.findById(Patients.class,patientId);
+            getSupportActionBar().setTitle(patients.getPatientname()+" ");
 
             mAdapter = new GetQuestionsAdapter(this, getQuestionList());
             RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(this);
